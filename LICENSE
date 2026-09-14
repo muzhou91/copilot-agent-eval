@@ -1,6 +1,16 @@
 MIT License
 
+copilot-agent-eval is licensed under the MIT License.
+
 Copyright (c) 2026 Joel Feng
+
+This project is an independent open-source project and is not affiliated
+with, sponsored by, or endorsed by Microsoft.
+
+Microsoft Copilot Studio, Azure, Direct Line, Entra ID, and related
+Microsoft products and services are trademarks and/or products of
+Microsoft and are subject to Microsoft's respective terms and licenses.
+Third-party dependencies are subject to their respective licenses.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
