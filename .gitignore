@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Playwright persistent auth profile (contains login cookies — never commit)
+.auth-profile/
+
+# Real config & cases (may contain secrets / internal data)
+config.yaml
+cases.csv
+
+# Test outputs
+reports/
+*.log
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Local secrets / caches
+.env
+.token_cache/
+*.token

@@ -1,0 +1,110 @@
+# =============================================================================
+# Copilot Agent Eval - configuration
+# Copy to config.yaml and fill in. Environment variables in ${VAR} form are
+# expanded automatically (e.g. ${DL_SECRET}).
+# =============================================================================
+
+directline:
+  # Copilot Studio -> Channels -> Direct Line -> secret key.
+  # Prefer an environment variable over putting the secret in plain text.
+  secret: "${DL_SECRET}"
+  # Global endpoint (your environment is the global cloud).
+  endpoint: "https://directline.botframework.com/v3/directline"
+  locale: "en-US"
+
+  # Static user identity encoded into the Direct Line token.
+  # Must start with "dl_" per Direct Line enhanced-authentication rules.
+  user:
+    id: "dl_loadtest_001"
+    name: "Agent Load Test User"
+
+  # Extra channelData merged into every outgoing message.
+  # Use this to replicate the context your host page normally passes to the
+  # agent (current record, entity name, roles, etc.).
+  channel_data:
+    source: "host_page"
+    entityName: "record"
+    recordId: "${HOST_RECORD_ID}"
+    userRoles:
+      - "Procurement Manager"
+
+# -----------------------------------------------------------------------------
+# Entra ID sign-in (Copilot Studio "Authenticate manually" + Require sign-in)
+# -----------------------------------------------------------------------------
+auth:
+  enabled: true
+  # Playwright is used to complete the OAuthCard sign-in once per conversation.
+  #
+  # Recommended setups:
+  #   1. Local dev / MFA account:
+  #        headless: false, manual: true
+  #      A visible browser opens; you sign in (incl. MFA) once. The persistent
+  #      profile below caches the Entra ID cookies so later runs are SSO-silent.
+  #   2. CI / service account without MFA:
+  #        headless: true, manual: false, username/password from env
+  #      The Entra ID form is filled automatically.
+  headless: false
+  manual: true
+  username: "${ENTRA_USERNAME}"
+  password: "${ENTRA_PASSWORD}"
+  # Persistent browser profile dir (relative to CWD). Reuses Entra ID cookies.
+  user_data_dir: ".auth-profile"
+  # How to submit the magic code back to the bot:
+  #   "message" -> send the 6-digit code as a plain chat message (this is what
+  #                a human types in the Copilot Studio test panel; use this for
+  #                Copilot Studio agents)
+  #   "invoke"  -> send signin/verifyState invoke activity (some other bots)
+  #   "auto"    -> try message first; on HTTP error or if the same OAuthCard
+  #                comes back, retry via invoke
+  code_submit_mode: "auto"
+  # Max seconds to wait for a human to complete the interactive login.
+  login_timeout_seconds: 300
+  # Max number of distinct OAuthCards to sign in to per turn. Set to 2 when the
+  # agent uses both Copilot Studio Entra auth AND an MCP connection that has its
+  # own first-time OAuth consent. Safety cap against redirect loops.
+  max_signin_rounds: 3
+  # Connection-manager (MCP/connector consent) button automation:
+  #   false -> PURE MANUAL (recommended). Open the page but never click any
+  #            button; you click Connect / Submit yourself, then come back to
+  #            the terminal and press Enter to continue (closing the browser
+  #            window also works). This prevents an auto-click from closing a
+  #            consent popup before you submit it.
+  #   true  -> auto-click Allow/Connect/Submit (only for unattended warm-SSO
+  #            runs where this is known to be safe).
+  auto_click_consent: false
+
+# -----------------------------------------------------------------------------
+runner:
+  interval_seconds: 5            # fixed pause between queries
+  max_wait_seconds: 60           # per-turn timeout waiting for the bot reply
+  quiet_seconds: 3               # silence window that marks end of a bot turn
+  polling_interval_seconds: 1    # Direct Line activities polling interval
+  concurrency: 1                 # concurrent conversations (keep 1 to start)
+  # isolated   -> new conversation + sign-in per test case
+  # continuous -> one conversation per session_group (multi-turn tests)
+  session_mode: "continuous"
+  # Refresh the Direct Line token this many seconds before it expires.
+  token_refresh_margin_seconds: 120
+
+assertions:
+  # A reply containing any of these (case-insensitive) is marked FAIL.
+  # Keep phrases specific: "sign in" / "error" are intentionally excluded
+  # because they appear in normal auth prompts and legitimate answers.
+  fail_on_error_phrases:
+    - "something went wrong"
+    - "i'm sorry, but i can't"
+    - "unable to process"
+    - "an error occurred"
+    - "not authorized"
+    - "you don't have permission"
+  # Default latency threshold (ms). Per-case override via CSV max_latency_ms.
+  default_max_latency_ms: 120000
+
+report:
+  output_dir: "reports"
+  formats:
+    - "excel"
+    - "html"
+    - "junit"
+  # Persist every raw activity JSON for debugging adaptive cards / attachments.
+  save_raw_activities: true

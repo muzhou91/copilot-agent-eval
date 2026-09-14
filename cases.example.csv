@@ -1,0 +1,6 @@
+case_id,query,expected_keywords,session_group,priority,max_latency_ms,notes
+TC001,"Show me order ORD-12345","order|ORD-12345",g1,P1,,Single-turn status lookup
+TC002,"What is its approval status?","approved|pending|submitted",g1,P1,,Follow-up referencing previous turn
+TC003,"Create a new request for vendor Contoso","create|request",g2,P1,,Starts a new multi-turn flow
+TC004,"Set quantity to 100","100|quantity",g2,P2,,Depends on TC003 context
+TC005,"List my pending requests","pending",g3,P2,15000,Isolated query with tighter latency SLA
