@@ -1,3 +1,8 @@
+<p align="center">
+<img width="1474" height="569" alt="截屏2026-09-15 11 51 25" src="https://github.com/user-attachments/assets/a4851a52-218c-4281-9c95-71d2eeae478d" />
+</p>
+Demo with cases examples
+
 # Copilot Agent Eval
 
 Automated **batch regression & evaluation runner for Microsoft Copilot Studio /
@@ -180,6 +185,12 @@ profile with one interactive MFA login.
 - [ ] Response-schema / card-shape assertions
 - [ ] Trend view across runs (regression delta, latency percentiles)
 - [ ] Streaming activity assertions
+
+## Operation Screenshots
+
+<p align="center">
+<img width="2512" height="2748" alt="1" src="https://github.com/user-attachments/assets/c147196a-3650-45d8-a476-59c47abd18db" />
+</p>
 
 ## License
 
